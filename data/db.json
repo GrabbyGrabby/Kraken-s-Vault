@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "email": "thedeadcurse@gmail.com",
+      "passwordHash": "$2b$10$N3Ql6kgCoyTWx9oaJVQY1un9BmRsLwf8FiNP0tmLrfVI.sZqZwheG",
+      "isWeb3": false,
+      "id": "a5e40a27-8a28-44d9-b256-7aea4583234f",
+      "createdAt": "2026-06-24T11:01:09.309Z"
+    }
+  ],
+  "items": [
+    {
+      "userId": "a5e40a27-8a28-44d9-b256-7aea4583234f",
+      "type": "login",
+      "title": "ca3e026eee7aa1b23751481ea2cab0220d35ef68528b67dfa875d1b49612c87039df97955007",
+      "titleIv": "86f36f68d59948653b32fbc4",
+      "fields": "362d1d7256be08eb8a247cd14faab9b35b3c07d56520077d6114885ee7222bf2fa526461ae0e00de12eef7f22cc3af547c22c0d9f7f9863c4d79de8c51e181cc1ace59232a16adba2b4e30d4857785",
+      "fieldsIv": "e6ed7a4d0949b1545e3479a1",
+      "favorite": false,
+      "id": "87bb2849-dcc4-46fd-af23-b5a4c22998f3",
+      "createdAt": "2026-06-24T11:02:16.991Z",
+      "updatedAt": "2026-06-24T11:02:16.991Z"
+    }
+  ]
+}
