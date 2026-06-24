@@ -217,22 +217,26 @@ export default function Vault() {
     return () => document.removeEventListener('click', handleOutsideClick);
   }, [isAddDropdownOpen]);
 
-  // Fetch encrypted vault items from API and decrypt them locally
+  // Fetch encrypted vault items from client Local Storage and decrypt them locally
   const fetchAndDecryptItems = async () => {
     setLoadingItems(true);
     try {
-      const response = await fetch('/api/vault/items', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to fetch items');
+      const savedEmail = localStorage.getItem('vault_user_email') || '';
+      const savedUserId = localStorage.getItem('vault_user_id') || savedEmail;
 
-      setEncryptedItems(data.items);
+      const getLocalItems = () => {
+        if (typeof window === 'undefined') return [];
+        const items = localStorage.getItem(`kraken_items_${savedUserId}`);
+        return items ? JSON.parse(items) : [];
+      };
+
+      const localItems = getLocalItems();
+      setEncryptedItems(localItems);
       
       const key = await importKeyFromHex(masterKeyHex);
       const decryptedList: DecryptedVaultItem[] = [];
 
-      for (const item of data.items) {
+      for (const item of localItems) {
         try {
           const title = await decryptData(item.title, item.titleIv, key);
           const fields = await decryptObject(item.fields, item.fieldsIv, key);
@@ -394,7 +398,7 @@ export default function Vault() {
     setIsFormOpen(true);
   };
 
-  // Save Item (Add or Edit)
+  // Save Item (Add or Edit) - Completely Client-Side Local Storage
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim()) return;
@@ -424,39 +428,55 @@ export default function Vault() {
       const encryptedTitle = await encryptData(formTitle, key);
       const encryptedFields = await encryptObject(fieldsObj, key);
 
-      const payload: any = {
-        type: itemType,
-        title: encryptedTitle.ciphertext,
-        titleIv: encryptedTitle.iv,
-        fields: encryptedFields.ciphertext,
-        fieldsIv: encryptedFields.iv,
-        favorite: formFavorite,
+      const savedEmail = localStorage.getItem('vault_user_email') || '';
+      const savedUserId = localStorage.getItem('vault_user_id') || savedEmail;
+
+      const getLocalItems = () => {
+        if (typeof window === 'undefined') return [];
+        const items = localStorage.getItem(`kraken_items_${savedUserId}`);
+        return items ? JSON.parse(items) : [];
       };
 
-      let response;
+      const saveLocalItems = (items: any[]) => {
+        if (typeof window === 'undefined') return;
+        localStorage.setItem(`kraken_items_${savedUserId}`, JSON.stringify(items));
+      };
+
+      const localItemsList = getLocalItems();
+      let savedItem: any;
+
       if (formMode === 'edit' && selectedItem) {
-        payload.id = selectedItem.id;
-        response = await fetch('/api/vault/items', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
+        const itemIndex = localItemsList.findIndex((item: any) => item.id === selectedItem.id);
+        if (itemIndex !== -1) {
+          localItemsList[itemIndex] = {
+            ...localItemsList[itemIndex],
+            type: itemType,
+            title: encryptedTitle.ciphertext,
+            titleIv: encryptedTitle.iv,
+            fields: encryptedFields.ciphertext,
+            fieldsIv: encryptedFields.iv,
+            favorite: formFavorite,
+            updatedAt: new Date().toISOString()
+          };
+          savedItem = localItemsList[itemIndex];
+        }
       } else {
-        response = await fetch('/api/vault/items', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
+        savedItem = {
+          id: Math.random().toString(36).substring(2, 15),
+          userId: savedUserId,
+          type: itemType,
+          title: encryptedTitle.ciphertext,
+          titleIv: encryptedTitle.iv,
+          fields: encryptedFields.ciphertext,
+          fieldsIv: encryptedFields.iv,
+          favorite: formFavorite,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        localItemsList.push(savedItem);
       }
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to save item');
+      saveLocalItems(localItemsList);
 
       await fetchAndDecryptItems();
       setIsFormOpen(false);
@@ -469,18 +489,18 @@ export default function Vault() {
           favorite: formFavorite,
           fields: fieldsObj,
           createdAt: selectedItem.createdAt,
-          updatedAt: new Date().toISOString()
+          updatedAt: savedItem.updatedAt
         };
         setSelectedItem(updated);
-      } else if (data.item) {
+      } else if (savedItem) {
         const newItem = {
-          id: data.item.id,
+          id: savedItem.id,
           type: itemType,
           title: formTitle,
           favorite: formFavorite,
           fields: fieldsObj,
-          createdAt: data.item.createdAt,
-          updatedAt: data.item.updatedAt
+          createdAt: savedItem.createdAt,
+          updatedAt: savedItem.updatedAt
         };
         setSelectedItem(newItem);
       }
@@ -490,18 +510,29 @@ export default function Vault() {
     }
   };
 
-  // Delete Vault Item
+  // Delete Vault Item - Completely Client-Side Local Storage
   const handleDeleteItem = async (id: string) => {
     if (!confirm('Are you sure you want to permanently delete this item?')) return;
 
     try {
-      const response = await fetch(`/api/vault/items?id=${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const savedEmail = localStorage.getItem('vault_user_email') || '';
+      const savedUserId = localStorage.getItem('vault_user_id') || savedEmail;
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to delete item');
+      const getLocalItems = () => {
+        if (typeof window === 'undefined') return [];
+        const items = localStorage.getItem(`kraken_items_${savedUserId}`);
+        return items ? JSON.parse(items) : [];
+      };
+
+      const saveLocalItems = (items: any[]) => {
+        if (typeof window === 'undefined') return;
+        localStorage.setItem(`kraken_items_${savedUserId}`, JSON.stringify(items));
+      };
+
+      const localItemsList = getLocalItems();
+      const filteredList = localItemsList.filter((item: any) => item.id !== id);
+
+      saveLocalItems(filteredList);
 
       setSelectedItem(null);
       await fetchAndDecryptItems();

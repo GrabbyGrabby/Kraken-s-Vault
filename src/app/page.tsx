@@ -87,7 +87,7 @@ export default function Home() {
     setPasswordStrength(strength);
   }, [password]);
 
-  // Handle Standard Email/Password Auth
+  // Handle Standard Email/Password Auth (Completely Client-Side Local Storage)
   const handleStandardAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -105,38 +105,62 @@ export default function Home() {
 
     setLoading(true);
     try {
-      // Derive keys
+      // Derive ZK keys
       const masterKey = await deriveMasterKey(password, email);
       const authHash = await deriveAuthHash(masterKey, password);
       const masterKeyHex = await exportKeyToHex(masterKey);
 
-      // Call Backend API
-      const endpoint = isLoginTab ? '/api/auth/login' : '/api/auth/signup';
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          authHash,
-          isWeb3: false
-        })
-      });
+      // Local storage helpers
+      const getLocalUsers = () => {
+        if (typeof window === 'undefined') return [];
+        const users = localStorage.getItem('kraken_users');
+        return users ? JSON.parse(users) : [];
+      };
 
-      const data = await response.json();
+      const saveLocalUsers = (users: any[]) => {
+        if (typeof window === 'undefined') return;
+        localStorage.setItem('kraken_users', JSON.stringify(users));
+      };
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Authentication failed');
-      }
+      const users = getLocalUsers();
+
+      // Secure client-side hashing of authHash using browser's SubtleCrypto
+      const encoder = new TextEncoder();
+      const dataBuffer = encoder.encode(authHash);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', dataBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
       if (isLoginTab) {
-        localStorage.setItem('vault_token', data.token);
-        localStorage.setItem('vault_user_email', data.user.email);
+        const user = users.find((u: any) => u.email.toLowerCase() === email.toLowerCase().trim());
+        if (!user || user.passwordHash !== passwordHash) {
+          throw new Error('Invalid email or master password.');
+        }
+
+        const token = `mock-jwt-token-${user.id}-${Date.now()}`;
+        localStorage.setItem('vault_token', token);
+        localStorage.setItem('vault_user_id', user.id);
+        localStorage.setItem('vault_user_email', user.email);
         localStorage.setItem('vault_user_is_web3', 'false');
         sessionStorage.setItem('vault_master_key', masterKeyHex);
         
         setSuccessMsg('Logged in successfully! Redirecting...');
         setTimeout(() => router.push('/vault'), 1000);
       } else {
+        const emailExists = users.some((u: any) => u.email.toLowerCase() === email.toLowerCase().trim());
+        if (emailExists) {
+          throw new Error('Email is already registered.');
+        }
+
+        const newUserId = Math.random().toString(36).substring(2, 15);
+        users.push({
+          id: newUserId,
+          email: email.toLowerCase().trim(),
+          passwordHash,
+          createdAt: new Date().toISOString()
+        });
+        saveLocalUsers(users);
+
         setSuccessMsg('Account registered successfully! You can now log in.');
         setIsLoginTab(true);
         setPassword('');
