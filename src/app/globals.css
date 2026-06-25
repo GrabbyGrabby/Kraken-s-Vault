@@ -1774,3 +1774,76 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
     grid-template-columns: 1fr;
   }
 }
+
+/* Kraken's Vault Header Animation Effects */
+.kraken-glow {
+  text-shadow: 0 0 10px rgba(162, 195, 164, 0.4), 0 0 20px rgba(162, 195, 164, 0.2);
+  transition: text-shadow var(--transition-normal), transform var(--transition-normal), filter var(--transition-normal);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.kraken-glow:hover {
+  text-shadow: 0 0 15px rgba(162, 195, 164, 0.7), 0 0 30px rgba(162, 195, 164, 0.3);
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15));
+}
+
+.header-logo-text.kraken-glow {
+  text-shadow: 0 0 10px rgba(162, 195, 164, 0.3), 0 0 20px rgba(53, 79, 82, 0.2);
+}
+
+.header-logo-text.kraken-glow:hover {
+  text-shadow: 0 0 15px rgba(162, 195, 164, 0.6), 0 0 30px rgba(53, 79, 82, 0.4);
+}
+
+/* Accessibility & Focus States conforming to components.build spec */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--bg-forest) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(53, 79, 82, 0.25) !important;
+}
+
+/* Modern smooth transitions for interactive cards and list items */
+.list-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.list-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.list-item:focus-visible {
+  outline: 2px solid var(--bg-forest) !important;
+  outline-offset: -2px !important;
+  border-radius: var(--radius-sm);
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--bg-forest) !important;
+  outline-offset: -2px !important;
+}
+
+/* Add custom scrollbar style for premium scroll feel */
+.items-list-container::-webkit-scrollbar {
+  width: 4px;
+}
+.items-list-container::-webkit-scrollbar-thumb {
+  background: rgba(53, 79, 82, 0.25);
+  border-radius: var(--radius-full);
+}
+.items-list-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(53, 79, 82, 0.45);
+}
+
+

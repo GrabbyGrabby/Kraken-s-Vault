@@ -35,6 +35,7 @@ import {
   decryptData, 
   decryptObject 
 } from '@/lib/crypto';
+import { getItems, saveItem, deleteItem } from '@/lib/indexedDb';
 
 // Types
 interface DecryptedVaultItem {
@@ -217,26 +218,35 @@ export default function Vault() {
     return () => document.removeEventListener('click', handleOutsideClick);
   }, [isAddDropdownOpen]);
 
-  // Fetch encrypted vault items from client Local Storage and decrypt them locally
+  // Fetch encrypted vault items from client IndexedDB and decrypt them locally
   const fetchAndDecryptItems = async () => {
     setLoadingItems(true);
     try {
       const savedEmail = localStorage.getItem('vault_user_email') || '';
       const savedUserId = localStorage.getItem('vault_user_id') || savedEmail;
 
-      const getLocalItems = () => {
-        if (typeof window === 'undefined') return [];
-        const items = localStorage.getItem(`kraken_items_${savedUserId}`);
-        return items ? JSON.parse(items) : [];
-      };
+      // Migrate items from localStorage to IndexedDB if they exist
+      const legacyItemsStr = localStorage.getItem(`kraken_items_${savedUserId}`);
+      if (legacyItemsStr) {
+        try {
+          const legacyItems = JSON.parse(legacyItemsStr);
+          for (const item of legacyItems) {
+            await saveItem(item);
+          }
+          localStorage.removeItem(`kraken_items_${savedUserId}`);
+          console.log(`Migrated ${legacyItems.length} items to IndexedDB`);
+        } catch (migErr) {
+          console.error('Failed to migrate items from localStorage:', migErr);
+        }
+      }
 
-      const localItems = getLocalItems();
-      setEncryptedItems(localItems);
+      const dbItems = await getItems(savedUserId);
+      setEncryptedItems(dbItems);
       
       const key = await importKeyFromHex(masterKeyHex);
       const decryptedList: DecryptedVaultItem[] = [];
 
-      for (const item of localItems) {
+      for (const item of dbItems) {
         try {
           const title = await decryptData(item.title, item.titleIv, key);
           const fields = await decryptObject(item.fields, item.fieldsIv, key);
@@ -398,7 +408,7 @@ export default function Vault() {
     setIsFormOpen(true);
   };
 
-  // Save Item (Add or Edit) - Completely Client-Side Local Storage
+  // Save Item (Add or Edit) - Completely Client-Side IndexedDB
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim()) return;
@@ -431,37 +441,24 @@ export default function Vault() {
       const savedEmail = localStorage.getItem('vault_user_email') || '';
       const savedUserId = localStorage.getItem('vault_user_id') || savedEmail;
 
-      const getLocalItems = () => {
-        if (typeof window === 'undefined') return [];
-        const items = localStorage.getItem(`kraken_items_${savedUserId}`);
-        return items ? JSON.parse(items) : [];
-      };
-
-      const saveLocalItems = (items: any[]) => {
-        if (typeof window === 'undefined') return;
-        localStorage.setItem(`kraken_items_${savedUserId}`, JSON.stringify(items));
-      };
-
-      const localItemsList = getLocalItems();
-      let savedItem: any;
+      const updatedAt = new Date().toISOString();
+      let finalItem: any;
 
       if (formMode === 'edit' && selectedItem) {
-        const itemIndex = localItemsList.findIndex((item: any) => item.id === selectedItem.id);
-        if (itemIndex !== -1) {
-          localItemsList[itemIndex] = {
-            ...localItemsList[itemIndex],
-            type: itemType,
-            title: encryptedTitle.ciphertext,
-            titleIv: encryptedTitle.iv,
-            fields: encryptedFields.ciphertext,
-            fieldsIv: encryptedFields.iv,
-            favorite: formFavorite,
-            updatedAt: new Date().toISOString()
-          };
-          savedItem = localItemsList[itemIndex];
-        }
+        finalItem = {
+          id: selectedItem.id,
+          userId: savedUserId,
+          type: itemType,
+          title: encryptedTitle.ciphertext,
+          titleIv: encryptedTitle.iv,
+          fields: encryptedFields.ciphertext,
+          fieldsIv: encryptedFields.iv,
+          favorite: formFavorite,
+          createdAt: selectedItem.createdAt,
+          updatedAt: updatedAt
+        };
       } else {
-        savedItem = {
+        finalItem = {
           id: Math.random().toString(36).substring(2, 15),
           userId: savedUserId,
           type: itemType,
@@ -473,67 +470,36 @@ export default function Vault() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
-        localItemsList.push(savedItem);
       }
 
-      saveLocalItems(localItemsList);
+      // Save to IndexedDB
+      await saveItem(finalItem);
 
       await fetchAndDecryptItems();
       setIsFormOpen(false);
       
-      if (formMode === 'edit' && selectedItem) {
-        const updated = {
-          id: selectedItem.id,
-          type: itemType,
-          title: formTitle,
-          favorite: formFavorite,
-          fields: fieldsObj,
-          createdAt: selectedItem.createdAt,
-          updatedAt: savedItem.updatedAt
-        };
-        setSelectedItem(updated);
-      } else if (savedItem) {
-        const newItem = {
-          id: savedItem.id,
-          type: itemType,
-          title: formTitle,
-          favorite: formFavorite,
-          fields: fieldsObj,
-          createdAt: savedItem.createdAt,
-          updatedAt: savedItem.updatedAt
-        };
-        setSelectedItem(newItem);
-      }
+      const updated = {
+        id: finalItem.id,
+        type: itemType,
+        title: formTitle,
+        favorite: formFavorite,
+        fields: fieldsObj,
+        createdAt: finalItem.createdAt,
+        updatedAt: finalItem.updatedAt
+      };
+      setSelectedItem(updated);
     } catch (err) {
       console.error('Failed to save item:', err);
       alert('Error saving vault item. Please check logs.');
     }
   };
 
-  // Delete Vault Item - Completely Client-Side Local Storage
+  // Delete Vault Item - Completely Client-Side IndexedDB
   const handleDeleteItem = async (id: string) => {
     if (!confirm('Are you sure you want to permanently delete this item?')) return;
 
     try {
-      const savedEmail = localStorage.getItem('vault_user_email') || '';
-      const savedUserId = localStorage.getItem('vault_user_id') || savedEmail;
-
-      const getLocalItems = () => {
-        if (typeof window === 'undefined') return [];
-        const items = localStorage.getItem(`kraken_items_${savedUserId}`);
-        return items ? JSON.parse(items) : [];
-      };
-
-      const saveLocalItems = (items: any[]) => {
-        if (typeof window === 'undefined') return;
-        localStorage.setItem(`kraken_items_${savedUserId}`, JSON.stringify(items));
-      };
-
-      const localItemsList = getLocalItems();
-      const filteredList = localItemsList.filter((item: any) => item.id !== id);
-
-      saveLocalItems(filteredList);
-
+      await deleteItem(id);
       setSelectedItem(null);
       await fetchAndDecryptItems();
     } catch (err) {
@@ -620,7 +586,19 @@ export default function Vault() {
           </button>
           <ShieldCheck size={26} style={{ color: 'var(--accent-emerald)', flexShrink: 0 }} />
           <div className="details-title-wrapper">
-            <h1 className="header-logo-text font-copperplate">Kraken's Vault</h1>
+            <motion.h1 
+              className="header-logo-text font-copperplate kraken-glow"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              whileHover={{ 
+                scale: 1.08, 
+                y: -2, 
+                transition: { type: 'spring', stiffness: 400, damping: 10 } 
+              }}
+              style={{ cursor: 'pointer', originX: 0 }}
+            >
+              Kraken's Vault
+            </motion.h1>
             <p className="header-logo-subtitle">Zero-Knowledge Encrypted</p>
           </div>
         </div>

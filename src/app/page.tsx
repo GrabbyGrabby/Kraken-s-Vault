@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { deriveMasterKey, deriveAuthHash, exportKeyToHex } from '@/lib/crypto';
+import { getUserByEmail, saveUser } from '@/lib/indexedDb';
 
 // Framer Motion Animation Variants
 const fadeInUp = {
@@ -71,6 +72,32 @@ export default function Home() {
     if (token && masterKey) {
       router.push('/vault');
     }
+
+    // Migrate users from localStorage to IndexedDB
+    const migrateUsers = async () => {
+      try {
+        const legacyUsersStr = localStorage.getItem('kraken_users');
+        if (legacyUsersStr) {
+          const legacyUsers = JSON.parse(legacyUsersStr);
+          for (const u of legacyUsers) {
+            const existing = await getUserByEmail(u.email);
+            if (!existing) {
+              await saveUser({
+                id: u.id,
+                email: u.email,
+                passwordHash: u.passwordHash,
+                createdAt: u.createdAt || new Date().toISOString()
+              });
+            }
+          }
+          localStorage.removeItem('kraken_users');
+          console.log('Successfully migrated users to IndexedDB');
+        }
+      } catch (err) {
+        console.error('Failed to migrate users to IndexedDB:', err);
+      }
+    };
+    migrateUsers();
   }, [router]);
 
   // Update password strength
@@ -110,20 +137,6 @@ export default function Home() {
       const authHash = await deriveAuthHash(masterKey, password);
       const masterKeyHex = await exportKeyToHex(masterKey);
 
-      // Local storage helpers
-      const getLocalUsers = () => {
-        if (typeof window === 'undefined') return [];
-        const users = localStorage.getItem('kraken_users');
-        return users ? JSON.parse(users) : [];
-      };
-
-      const saveLocalUsers = (users: any[]) => {
-        if (typeof window === 'undefined') return;
-        localStorage.setItem('kraken_users', JSON.stringify(users));
-      };
-
-      const users = getLocalUsers();
-
       // Secure client-side hashing of authHash using browser's SubtleCrypto
       const encoder = new TextEncoder();
       const dataBuffer = encoder.encode(authHash);
@@ -132,7 +145,7 @@ export default function Home() {
       const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
       if (isLoginTab) {
-        const user = users.find((u: any) => u.email.toLowerCase() === email.toLowerCase().trim());
+        const user = await getUserByEmail(email);
         if (!user || user.passwordHash !== passwordHash) {
           throw new Error('Invalid email or master password.');
         }
@@ -147,19 +160,18 @@ export default function Home() {
         setSuccessMsg('Logged in successfully! Redirecting...');
         setTimeout(() => router.push('/vault'), 1000);
       } else {
-        const emailExists = users.some((u: any) => u.email.toLowerCase() === email.toLowerCase().trim());
+        const emailExists = await getUserByEmail(email);
         if (emailExists) {
           throw new Error('Email is already registered.');
         }
 
         const newUserId = Math.random().toString(36).substring(2, 15);
-        users.push({
+        await saveUser({
           id: newUserId,
           email: email.toLowerCase().trim(),
           passwordHash,
           createdAt: new Date().toISOString()
         });
-        saveLocalUsers(users);
 
         setSuccessMsg('Account registered successfully! You can now log in.');
         setIsLoginTab(true);
@@ -190,7 +202,20 @@ export default function Home() {
 
           <motion.h1 className="hero-title" variants={fadeInUp}>
             Protect Credentials <br />
-            With <span className="vault-header-logo">Kraken's Vault</span>
+            With{' '}
+            <motion.span 
+              className="vault-header-logo kraken-glow"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              whileHover={{ 
+                scale: 1.08, 
+                y: -4, 
+                transition: { type: 'spring', stiffness: 400, damping: 10 } 
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              Kraken's Vault
+            </motion.span>
           </motion.h1>
 
           <motion.p className="hero-desc" variants={fadeInUp}>
