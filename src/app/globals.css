@@ -1,25 +1,30 @@
 /* Import Poppins and Cinzel from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-:root {
-  /* Grabby's Portfolio Inspired Color Palette (Light sage page bg, forest and mint sage cards) */
-  --bg-page: #cad2c5;          /* Light grayish-sage page background */
-  --bg-forest: #354f52;        /* Deep slate forest green (dark cards) */
-  --bg-mint: #a2c3a4;          /* Minty sage green (light cards) */
+:root,
+.theme-ocean {
+  /* Ocean Blue Theme (Screenshot 2) */
+  --bg-page: #f6fafd;          /* Light page bg */
+  --bg-page-gradient: linear-gradient(135deg, #f6fafd 0%, #b3cfe5 100%);
+  --bg-layout: #0a1931;        /* Deep navy layout wrapper bg */
+  --bg-header: #071224;        /* Darker navy header */
+  --bg-forest: #1a3d63;        /* Dark blue cards */
+  --bg-mint: #b3cfe5;          /* Light ice blue cards */
   
-  --border-dark: #2f3e46;
-  --border-light: #8bb38d;
+  --border-dark: #102640;
+  --border-light: #89b3d6;
   
-  --text-dark: #1a1c1e;
+  --text-dark: #0a1931;
   --text-light: #ffffff;
-  --text-sage: #cad2c5;
-  --text-muted: #6f7f7f;
+  --text-sage: #b3cfe5;
+  --text-muted: #4a7fa7;
   
-  --accent-emerald: #a2c3a4;
-  --accent-emerald-hover: #8bb38d;
+  --accent-emerald: #4a7fa7;
+  --accent-emerald-hover: #1a3d63;
+  --theme-glow: rgba(74, 127, 167, 0.35);
   
   /* Fonts */
-  --font-header: 'Copperplate Gothic', 'Copperplate', 'Cinzel', serif;
+  --font-header: 'Poppins', 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Poppins', 'Segoe UI', Roboto, sans-serif;
   
   /* Radius & Transitions */
@@ -30,10 +35,49 @@
   
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.25);
-  --shadow-accent: 0 0 20px rgba(53, 79, 82, 0.2);
+  --shadow-md: 0 8px 32px rgba(10, 25, 49, 0.15);
+  --shadow-lg: 0 16px 48px rgba(10, 25, 49, 0.25);
+  --shadow-accent: 0 0 20px rgba(74, 127, 167, 0.2);
 }
+
+.theme-burgundy {
+  /* Burgundy Rose Theme (Screenshot 1) */
+  --bg-page: #fff0f2;          /* Soft pink/cream page bg */
+  --bg-page-gradient: linear-gradient(135deg, #fff0f2 0%, #ffd2dd 100%);
+  --bg-layout: #4a0012;        /* Deep wine burgundy layout wrapper bg */
+  --bg-header: #33000b;        /* Darker wine header */
+  --bg-forest: #800021;        /* Dark burgundy cards */
+  --bg-mint: #ffd2dd;          /* Soft blush pink cards */
+  
+  --border-dark: #5c0018;
+  --border-light: #ffb3c4;
+  
+  --text-dark: #800021;
+  --text-light: #ffffff;
+  --text-sage: #ffd2dd;
+  --text-muted: #c24366;
+  
+  --accent-emerald: #c24366;
+  --accent-emerald-hover: #881144;
+  --theme-glow: rgba(194, 67, 102, 0.35);
+  
+  /* Fonts */
+  --font-header: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+  
+  /* Radius & Transitions overrides */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-md: 0 8px 32px rgba(128, 0, 33, 0.15);
+  --shadow-lg: 0 16px 48px rgba(128, 0, 33, 0.25);
+  --shadow-accent: 0 0 20px rgba(194, 67, 102, 0.2);
+}
+
 
 * {
   box-sizing: border-box;
@@ -114,7 +158,7 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
 
 /* Gradient landing page background */
 .gradient-bg {
-  background-color: var(--bg-page);
+  background: var(--bg-page-gradient);
 }
 
 /* ==========================================================================
@@ -327,17 +371,28 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
 
 /* LIGHT MODE LOGIN CARD */
 .auth-card {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-light);
   padding: 2.5rem;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   position: relative;
   overflow: hidden;
   width: 100%;
+  transition: all 0.3s ease;
+}
+.theme-burgundy .auth-card {
+  background: rgba(255, 240, 242, 0.75);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(128, 0, 33, 0.1);
+}
+.theme-ocean .auth-card {
+  background: rgba(246, 250, 253, 0.75);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(10, 25, 49, 0.1);
 }
 
 .auth-ambient-light {
@@ -565,13 +620,13 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: #111c18; /* Dark mode page background */
+  background-color: var(--bg-layout); /* Dynamic theme layout background */
 }
 
 .vault-header {
   height: 4.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: #111a17;          /* Dark black green navbar from portfolio */
+  background: var(--bg-header);          /* Dynamic theme header background */
   padding: 0 1.75rem;
   display: flex;
   align-items: center;
@@ -699,7 +754,7 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
   font-size: 0.8rem;
   border: none;
   cursor: pointer;
-  background: var(--bg-mint);           /* Mint sage highlight button */
+  background: var(--bg-mint);           /* Mint/rose highlight button */
   color: var(--text-dark);
   display: flex;
   align-items: center;
@@ -709,8 +764,8 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
 }
 
 .add-item-btn:hover {
-  background: var(--accent-emerald-hover);
-  box-shadow: 0 0 15px rgba(162, 195, 164, 0.3);
+  background: var(--bg-mint);
+  box-shadow: 0 0 15px rgba(162, 195, 164, 0.2);
 }
 
 .add-item-dropdown {
@@ -795,18 +850,24 @@ p, span, label, input, button, select, textarea, a, .details-field-value, .item-
   font-weight: 600;
 }
 
-/* Floating Middle Items Pane (Light Mint Green Card) */
+/* Floating Middle Items Pane */
 .items-panel {
-  width: 310px;
+  flex-grow: 1;
   background: var(--bg-mint);            /* Light mint green card style */
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
   overflow: hidden;
   box-shadow: var(--shadow-md);
   color: var(--text-dark);
+  transition: all 0.25s ease-out;
+}
+
+.items-panel.split-view {
+  width: 310px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .items-panel .search-container {
@@ -1846,4 +1907,1233 @@ textarea:focus-visible,
   background: rgba(53, 79, 82, 0.45);
 }
 
+/* ==========================================================================
+   PREMIUM GLASS MODAL & INTERACTIVE CARD POPUP STYLES
+   ========================================================================== */
+
+.glass-modal {
+  background: rgba(26, 61, 99, 0.3) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45) !important;
+}
+
+.theme-burgundy .glass-modal {
+  background: rgba(128, 0, 33, 0.35) !important;
+  border-color: rgba(255, 179, 196, 0.12) !important;
+}
+
+/* Dynamic Glowing Borders for cards */
+.glowing-card-border {
+  position: relative;
+}
+.glowing-card-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02) 50%, var(--accent-emerald) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Theme Switcher Toggle button */
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-full);
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent-emerald);
+  box-shadow: 0 0 15px var(--theme-glow);
+  transform: translateY(-1px);
+}
+
+.theme-toggle-btn.landing-theme-toggle {
+  background: #ffffff;
+  color: var(--text-dark);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  margin-top: 1rem;
+  width: fit-content;
+}
+
+.theme-toggle-btn.landing-theme-toggle:hover {
+  background: var(--bg-mint);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-accent);
+}
+
+/* Credential Visualizer Preview Container */
+.card-preview-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  perspective: 1000px;
+}
+
+/* 3D tilt interaction for details popups */
+.card-preview-tilt {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* 1. Credit Card preview styling */
+.virtual-credit-card {
+  width: 320px;
+  height: 190px;
+  border-radius: 18px;
+  position: relative;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #0e1c33 0%, #1a3d63 50%, #4a7fa7 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  font-family: 'Share Tech Mono', 'Courier New', Courier, monospace;
+}
+
+.theme-burgundy .virtual-credit-card {
+  background: linear-gradient(135deg, #4a0012 0%, #800021 50%, #c24366 100%);
+}
+
+.virtual-credit-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.credit-card-chip {
+  width: 44px;
+  height: 34px;
+  background: linear-gradient(135deg, #ffd700 0%, #cca300 50%, #997a00 100%);
+  border-radius: 6px;
+  position: relative;
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.credit-card-chip::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.credit-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.credit-card-logo {
+  font-family: var(--font-header) !important;
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.credit-card-number {
+  font-size: 1.18rem;
+  letter-spacing: 0.14em;
+  text-shadow: 1px 1.5px 2px rgba(0, 0, 0, 0.6);
+  margin: 1.1rem 0 0.4rem;
+  word-spacing: 0.1em;
+  color: #ffffff;
+}
+
+.credit-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.credit-card-holder-area {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 70%;
+}
+
+.credit-card-label {
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+  font-family: var(--font-body) !important;
+}
+
+.credit-card-holder-name {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.credit-card-expiry-area {
+  text-align: right;
+}
+
+.credit-card-expiry-value {
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+/* 2. Login Keycard preview styling */
+.virtual-login-card {
+  width: 320px;
+  height: 190px;
+  border-radius: 18px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #102640 0%, #1a3d63 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-burgundy .virtual-login-card {
+  background: linear-gradient(135deg, #5c0018 0%, #800021 100%);
+}
+
+.virtual-login-card::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--accent-emerald) 0%, transparent 70%);
+  top: -80px;
+  right: -80px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.login-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-card-icon-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.55rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card-type {
+  font-size: 0.6rem;
+  background: var(--accent-emerald);
+  color: var(--text-light);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.login-card-body {
+  margin-top: 0.75rem;
+}
+
+.login-card-title {
+  font-family: var(--font-header) !important;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-card-username {
+  font-size: 0.75rem;
+  color: var(--text-sage);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-card-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  color: var(--text-sage);
+}
+
+.login-card-url {
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 3. Identity Document Badge styling */
+.virtual-identity-card {
+  width: 320px;
+  height: 190px;
+  border-radius: 18px;
+  padding: 1.4rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  position: relative;
+  display: flex;
+  gap: 1.25rem;
+}
+
+.theme-burgundy .virtual-identity-card {
+  background: linear-gradient(135deg, #3b000e 0%, #5c0018 100%);
+}
+
+.identity-card-photo {
+  width: 75px;
+  height: 95px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+  font-size: 0.5rem;
+  gap: 0.4rem;
+}
+
+.identity-card-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.identity-card-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.identity-card-label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  color: var(--text-sage);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.identity-card-title {
+  font-family: var(--font-header) !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.identity-card-name {
+  font-size: 0.74rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.identity-card-number {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+/* 4. Secure Note Notebook styling */
+.virtual-note-card {
+  width: 320px;
+  height: 190px;
+  border-radius: 18px;
+  padding: 1.4rem;
+  background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.theme-ocean .virtual-note-card {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
+}
+
+.theme-burgundy .virtual-note-card {
+  background: linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%);
+  color: #9f1239;
+}
+
+.note-card-spiral {
+  position: absolute;
+  top: 10px;
+  left: 10%;
+  right: 10%;
+  height: 8px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.note-card-spiral::before,
+.note-card-spiral::after,
+.note-card-spiral-dot {
+  content: '';
+  width: 8px;
+  height: 16px;
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: 1px solid #94a3b8;
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,0.8);
+}
+
+.note-card-lines {
+  background: linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 100% 1.25rem;
+  flex: 1;
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  line-height: 1.25rem;
+  overflow: hidden;
+  font-weight: 500;
+  font-family: inherit;
+  word-break: break-all;
+  opacity: 0.85;
+}
+
+.note-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  opacity: 0.6;
+  border-top: 1px dashed rgba(0,0,0,0.1);
+  padding-top: 0.4rem;
+}
+
+/* ==========================================================================
+   MODERN CARD POPUP STYLING (FOR VIEW DETAILS OVERLAY)
+   ========================================================================== */
+.card-details-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 5, 8, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  padding: 1.5rem;
+}
+
+.card-details-popup-card {
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-details-popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.4rem;
+  border-radius: var(--radius-full);
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.card-details-popup-close:hover {
+  background: rgba(255,255,255,0.2);
+  transform: rotate(90deg);
+}
+
+.card-details-popup-body {
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.details-popup-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.details-popup-btn {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  border: none;
+}
+
+.details-popup-btn.edit {
+  background: var(--bg-mint);
+  color: var(--text-dark);
+}
+
+.details-popup-btn.edit:hover {
+  background: var(--accent-emerald-hover);
+  color: var(--text-light);
+}
+
+.details-popup-btn.delete {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--accent-red);
+}
+
+.details-popup-btn.delete:hover {
+  background: var(--accent-red);
+  color: #fff;
+}
+
+/* ==========================================================================
+   SOLID DETAIL CARD POPUP STYLES (MATCHES MOCKUP SCREENSHOT)
+   ========================================================================== */
+
+.solid-details-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 24px;
+  padding: 2.2rem;
+  color: #ffffff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Card type background color variations (SOLID, NON-TRANSPARENT!) */
+.solid-details-card.card-type-login {
+  background-color: #800021 !important; /* Solid Burgundy */
+}
+.theme-ocean .solid-details-card.card-type-login {
+  background-color: #1a3d63 !important; /* Solid Navy */
+}
+
+.solid-details-card.card-type-card {
+  background-color: #5c0018 !important; /* Solid Plum */
+}
+.theme-ocean .solid-details-card.card-type-card {
+  background-color: #0c2340 !important; /* Solid Midnight Blue */
+}
+
+.solid-details-card.card-type-note {
+  background-color: #4a0012 !important; /* Solid Dark Red */
+}
+.theme-ocean .solid-details-card.card-type-note {
+  background-color: #0f3737 !important; /* Solid Dark Teal */
+}
+
+.solid-details-card.card-type-identity {
+  background-color: #5c0018 !important; /* Solid Plum */
+}
+.theme-ocean .solid-details-card.card-type-identity {
+  background-color: #2d3748 !important; /* Solid Slate Slate Gray */
+}
+
+/* Header row layout */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.card-icon-badge-round {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.card-pill-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  color: #ffffff;
+}
+
+/* Card Body elements */
+.card-main-title {
+  font-family: var(--font-header) !important;
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-top: 1.6rem;
+  text-transform: uppercase;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-primary-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-top: 0.35rem;
+  color: #ffffff;
+  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-divider-line {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 1.25rem 0;
+  width: 100%;
+}
+
+/* Bottom row layout */
+.card-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.card-bottom-left-field {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.8;
+  color: #ffffff;
+  word-break: break-all;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-password-pill {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: monospace;
+}
+
+.card-password-pill:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.03);
+}
+
+.card-password-pill:active {
+  transform: scale(0.98);
+}
+
+/* Dashboard Grid Layout for Cards */
+.items-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 1.25rem;
+  padding: 1.25rem;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.solid-details-card.dashboard-card {
+  max-width: none !important;
+  width: 100%;
+  padding: 0.8rem 1rem !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  min-height: auto !important;
+}
+
+.solid-details-card.dashboard-card .card-icon-badge-round {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.solid-details-card.dashboard-card .card-icon-badge-round svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.solid-details-card.dashboard-card .card-pill-tag {
+  font-size: 0.5rem !important;
+  padding: 0.25rem 0.6rem !important;
+}
+
+.solid-details-card.dashboard-card .card-main-title {
+  font-size: 1rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.solid-details-card.dashboard-card .card-primary-text {
+  font-size: 0.76rem !important;
+  margin-top: 0.1rem !important;
+}
+
+.solid-details-card.dashboard-card .card-divider-line {
+  margin: 0.5rem 0 !important;
+}
+
+.solid-details-card.dashboard-card .card-bottom-left-field {
+  font-size: 0.72rem !important;
+}
+
+.solid-details-card.dashboard-card .card-password-pill {
+  padding: 0.25rem 0.6rem !important;
+  font-size: 0.62rem !important;
+}
+
+.solid-details-card.dashboard-card .details-popup-actions {
+  margin-top: 0.8rem !important;
+  gap: 0.4rem !important;
+}
+
+.solid-details-card.dashboard-card .details-popup-btn {
+  padding: 0.4rem 0.6rem !important;
+  font-size: 0.68rem !important;
+  border-radius: 6px !important;
+}
+
+/* Solid, Light-Colored Add Item Form Modal Card (Matches var(--bg-mint) background, non-transparent) */
+.form-card {
+  background: var(--bg-mint) !important;
+  color: var(--text-dark) !important;
+  border: 1px solid var(--border-light) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.form-card .form-card-title {
+  color: var(--text-dark) !important;
+}
+
+.form-card .form-label {
+  color: var(--text-dark) !important;
+  opacity: 0.85;
+}
+
+.form-card .form-input, 
+.form-card .form-select {
+  background: #ffffff !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-dark) !important;
+}
+
+.form-card .form-input::placeholder {
+  color: #888888 !important;
+}
+
+.form-card .form-cancel-btn {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: var(--text-dark) !important;
+}
+
+.form-card .form-cancel-btn:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.form-card .form-close-btn {
+  color: var(--text-dark) !important;
+  opacity: 0.6;
+}
+
+.form-card .form-close-btn:hover {
+  opacity: 1;
+}
+
+/* Responsive adjustment for grid */
+@media (max-width: 768px) {
+  .items-list-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+/* 3D Flip Card Container */
+.flip-card {
+  perspective: 1000px;
+  width: 100%;
+  height: 230px; /* fixed height for consistent card sizes and flip motion */
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 18px;
+  margin: 0;
+}
+
+.flip-card-front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+}
+
+/* Credential Edit Form inside Card Back */
+.card-edit-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.card-edit-fields {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Scrollbar for card edit fields */
+.card-edit-fields::-webkit-scrollbar {
+  width: 3px;
+}
+.card-edit-fields::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+.card-edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.card-edit-label {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-body) !important;
+}
+
+.card-edit-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px !important;
+  padding: 0.35rem 0.55rem !important;
+  font-size: 0.72rem !important;
+  color: #ffffff !important;
+  width: 100%;
+  font-family: var(--font-body) !important;
+}
+
+.card-edit-input option {
+  background: var(--bg-forest);
+  color: #ffffff;
+}
+
+.card-edit-input:focus {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.card-edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
+}
+
+.card-edit-btn {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  border: none;
+  transition: all 0.2s;
+  font-family: var(--font-body) !important;
+}
+
+.card-edit-btn.save {
+  background: #ffffff;
+  color: #000000;
+}
+
+.card-edit-btn.save:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.card-edit-btn.cancel {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+.card-edit-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ==========================================================================
+   MODERN BLACK CARD MODAL OVERRIDES (POPPINS ACCENTS & CURVED INPUTS)
+   ========================================================================== */
+.form-card, .form-card.glass-modal {
+  background: #000000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  font-family: 'Poppins', sans-serif !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.card-preview-wrapper {
+  margin-top: 0.4rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.virtual-credit-card, .virtual-login-card, .virtual-identity-card, .virtual-note-card {
+  transform: scale(0.82) !important;
+  margin: -18px 0 !important;
+}
+
+.form-card .form-label, 
+.form-card label, 
+.form-card .form-group label, 
+.form-card .form-checkbox-label, 
+.form-card .form-checkbox-label span,
+.form-label {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.74rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 0.35rem !important;
+  display: block !important;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 0.55rem 1.1rem !important;
+  border-radius: 99px !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.form-input::placeholder {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+.form-input:focus, .form-select:focus {
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+textarea.form-input {
+  border-radius: 14px !important;
+  padding: 0.75rem 1rem !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.form-select option {
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.form-input-inline-btn {
+  padding: 0.75rem 1.4rem !important;
+  border-radius: 99px !important;
+  border: none !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.form-input-inline-btn:hover {
+  background: #f0f0f0 !important;
+  transform: translateY(-1px);
+}
+
+.form-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  margin: 0.6rem 0 !important;
+}
+
+.form-card-header {
+  position: sticky !important;
+  top: -1.5rem !important;
+  background: #000000 !important;
+  z-index: 30 !important;
+  padding: 1.2rem 0 !important;
+  margin-bottom: 1.25rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.form-close-btn, body .form-card .form-close-btn {
+  color: #ffffff !important;
+  opacity: 0.95 !important;
+  z-index: 1000 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 0 !important;
+  transform: translateY(-50%) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.form-close-btn:hover, body .form-card .form-close-btn:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  transform: translateY(-50%) scale(1.05) !important;
+}
+
+.form-actions {
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  margin-top: 1rem !important;
+  padding: 1rem 0 0.5rem 0 !important;
+  position: sticky !important;
+  bottom: -1.5rem !important;
+  background: #000000 !important;
+  z-index: 20 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.75rem !important;
+}
+
+.form-save-btn {
+  padding: 0.55rem 1.6rem !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-radius: 99px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  font-family: 'Poppins', sans-serif !important;
+  letter-spacing: 0.03em !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+}
+
+.form-save-btn:hover {
+  background: #f0f0f0 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15) !important;
+}
+
+.form-cancel-btn {
+  padding: 0.55rem 1.6rem !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #ffffff !important;
+  border-radius: 99px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.form-cancel-btn:hover {
+  color: #ffffff !important;
+  background: rgba(239, 68, 68, 0.32) !important;
+  transform: translateY(-1px) !important;
+}
+
+.form-divider {
+  margin: 0.4rem 0 !important;
+}
+
+.vault-form {
+  gap: 0.8rem !important;
+}
+
+.form-card-title, body .form-card .form-card-title, .form-card h2 {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 700 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.form-card::after, .form-card.glowing-card-border::after {
+  display: none !important;
+  content: none !important;
+}
+
+.input-field {
+  color: #000000 !important;
+}
+
+.auth-card .form-label {
+  color: #000000 !important;
+}
+
+.auth-card .input-field {
+  color: #000000 !important;
+}
+
+.auth-card .input-icon {
+  color: #000000 !important;
+}
 

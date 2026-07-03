@@ -13,7 +13,8 @@ import {
   Check, 
   Activity, 
   Server, 
-  ShieldAlert 
+  ShieldAlert,
+  Palette
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { deriveMasterKey, deriveAuthHash, exportKeyToHex } from '@/lib/crypto';
@@ -51,11 +52,36 @@ const scaleIn = {
 export default function Home() {
   const router = useRouter();
 
+  // Runaway logo state
+  const [logoLeftPos, setLogoLeftPos] = useState({ x: 0, y: 0 });
+
+  const shiftLogoLeft = () => {
+    const rx = (Math.random() - 0.5) * 380; // Shift between -190px and +190px for high dynamic range
+    const ry = (Math.random() - 0.5) * 380;
+    setLogoLeftPos({ x: rx, y: ry });
+  };
+
   // Navigation / Loading state
   const [isLoginTab, setIsLoginTab] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  // Theme state
+  const [theme, setTheme] = useState('theme-ocean');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('vault_theme') || 'theme-ocean';
+    setTheme(savedTheme);
+    document.documentElement.className = savedTheme;
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'theme-ocean' ? 'theme-burgundy' : 'theme-ocean';
+    setTheme(newTheme);
+    localStorage.setItem('vault_theme', newTheme);
+    document.documentElement.className = newTheme;
+  };
 
   // Form Inputs
   const [email, setEmail] = useState('');
@@ -185,7 +211,48 @@ export default function Home() {
   };
 
   return (
-    <main className="landing-container">
+    <main className="landing-container" style={{ position: 'relative' }}>
+      
+      {/* Floating Theme Switcher */}
+      <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 50, display: 'flex', gap: '0.25rem', background: 'rgba(255, 255, 255, 0.1)', padding: '0.2rem', borderRadius: '999px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
+        <button 
+          type="button"
+          onClick={() => { if (theme !== 'theme-ocean') toggleTheme(); }}
+          style={{
+            padding: '0.25rem 0.6rem',
+            fontSize: '0.62rem',
+            fontWeight: 700,
+            borderRadius: '999px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            background: theme === 'theme-ocean' ? 'var(--bg-mint)' : 'transparent',
+            color: theme === 'theme-ocean' ? 'var(--text-dark)' : 'var(--text-light)',
+            opacity: theme === 'theme-ocean' ? 1 : 0.6,
+          }}
+        >
+          Ocean
+        </button>
+        <button 
+          type="button"
+          onClick={() => { if (theme !== 'theme-burgundy') toggleTheme(); }}
+          style={{
+            padding: '0.25rem 0.6rem',
+            fontSize: '0.62rem',
+            fontWeight: 700,
+            borderRadius: '999px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            background: theme === 'theme-burgundy' ? 'var(--bg-mint)' : 'transparent',
+            color: theme === 'theme-burgundy' ? 'var(--text-dark)' : 'var(--text-light)',
+            opacity: theme === 'theme-burgundy' ? 1 : 0.6,
+          }}
+        >
+          Burgundy
+        </button>
+      </div>
+
       <div className="landing-grid">
         
         {/* Left Side: Product Intro */}
@@ -195,34 +262,61 @@ export default function Home() {
           animate="visible"
           variants={staggerContainer}
         >
-          <motion.div className="badge-container" variants={fadeInUp}>
-            <ShieldCheck size={14} className="badge-icon" style={{ color: 'var(--accent-emerald)' }} />
-            <span className="badge-text">Zero-Knowledge Storage</span>
-          </motion.div>
-
-          <motion.h1 className="hero-title" variants={fadeInUp}>
-            Protect Credentials <br />
-            With{' '}
-            <motion.span 
-              className="vault-header-logo kraken-glow"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              whileHover={{ 
-                scale: 1.08, 
-                y: -4, 
-                transition: { type: 'spring', stiffness: 400, damping: 10 } 
+          {/* Relative container for logo and text overlay */}
+          <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column' }}>
+            
+            {/* The Runaway Octopus (behind the text) */}
+            <motion.div 
+              initial={{ scale: 0.3, opacity: 0 }}
+              animate={{ scale: 0.85, opacity: 1, x: logoLeftPos.x, y: logoLeftPos.y }}
+              transition={{ type: 'spring', damping: 9, stiffness: 260, delay: 0.1 }}
+              onMouseEnter={shiftLogoLeft}
+              style={{ 
+                position: 'absolute',
+                top: '55%',
+                left: '20%',
+                transform: 'translate(-50%, -50%)',
+                cursor: 'pointer',
+                zIndex: 1,
+                width: 'fit-content'
               }}
-              style={{ cursor: 'pointer' }}
             >
-              Kraken's Vault
-            </motion.span>
-          </motion.h1>
+              <img 
+                src="/logo.png" 
+                alt="Kraken Logo" 
+                style={{ 
+                  width: '360px', 
+                  height: '360px', 
+                  objectFit: 'contain',
+                  opacity: 1.0,
+                  userSelect: 'none'
+                }} 
+              />
+            </motion.div>
 
-          <motion.p className="hero-desc" variants={fadeInUp}>
-            A state-of-the-art secure credential manager. 
-            All data is encrypted client-side using military-grade AES-256-GCM 
-            before saving. Accessible only by you.
-          </motion.p>
+            {/* Static Content (Badge, Title, Desc) in front of the octopus */}
+            <div style={{ position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
+              <motion.div className="badge-container" variants={fadeInUp}>
+                <ShieldCheck size={14} className="badge-icon" style={{ color: 'var(--accent-emerald)' }} />
+                <span className="badge-text">High-Security Storage</span>
+              </motion.div>
+
+              <motion.h1 className="hero-title" variants={fadeInUp} style={{ marginTop: '0.5rem' }}>
+                Protect Credentials <br />
+                With{' '}
+                <span className="vault-header-logo kraken-glow">
+                  Kraken's Vault
+                </span>
+              </motion.h1>
+
+              <motion.p className="hero-desc" variants={fadeInUp} style={{ marginTop: '1rem', maxWidth: '480px' }}>
+                A state-of-the-art secure credential manager. 
+                All data is encrypted client-side using military-grade AES-256-GCM 
+                before saving. Accessible only by you.
+              </motion.p>
+            </div>
+
+          </div>
 
           <motion.div className="features-grid" variants={staggerContainer}>
             <motion.div className="feature-item light-card" variants={fadeInUp}>
@@ -263,6 +357,8 @@ export default function Home() {
           animate="visible"
           variants={scaleIn}
         >
+
+
           <div className="auth-card">
             <div className="auth-ambient-light" />
             
