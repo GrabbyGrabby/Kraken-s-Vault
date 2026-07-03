@@ -270,7 +270,7 @@ export default function Home() {
               initial={{ scale: 0.3, opacity: 0 }}
               animate={{ scale: 0.85, opacity: 1, x: logoLeftPos.x, y: logoLeftPos.y }}
               transition={{ type: 'spring', damping: 9, stiffness: 260, delay: 0.1 }}
-              onMouseEnter={shiftLogoLeft}
+              onMouseMove={shiftLogoLeft}
               style={{ 
                 position: 'absolute',
                 top: '55%',
